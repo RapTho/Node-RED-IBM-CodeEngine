@@ -1,33 +1,30 @@
 {
-    "name": "Node-RED-TWC-Weather-Radar-Map",
-    "description": "Node-RED Dashboard which displays a time-lapse North America Satellite / Radar Weather map using the TWC weather apis",
+    "name": "node-red-ibm-codeengine",
+    "description": "Node-RED app deployed on IBM Cloud Code Engine",
     "version": "1.0.0",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/johnwalicki/Node-RED-TWC-Weather-Radar-Map.git"
+        "url": "git+https://github.com/RapTho/Node-RED-IBM-CodeEngine.git"
     },
     "keywords": [
-        "node-red",
-        "weather",
-        "twc",
-        "forecast",
-        "radar"
+        "node-red"
     ],
-    "author": "John Walicki <johnwalicki@gmail.com>",
+    "author": "Raphael Tholl <raphael.tholl@ibm.com>",
     "license": "Apache-2.0",
     "dependencies": {
-        "node-red": "3.x",
-        "node-red-contrib-image-tools": "2.x",
-        "node-red-dashboard": "3.x",
-        "node-red-node-base64": "0.x",
-        "node-red-contrib-twc-weather": "0.x",
-        "node-red-contrib-web-worldmap":"2.x",
-        "node-red-contrib-ui-multistate-switch": "1.x"
+        "@ibm-cloud/cloudant": "^0.3.1",
+        "express": "4.x",
+        "ibm-cloud-env": "^0",
+        "node-red": "^2.2.2",
+        "node-red-node-cf-cloudant": "0.x",
+        "node-red-contrib-loop-processing": "0.5.1",
+        "node-red-contrib-ui-heatmap": "2.2.1",
+        "node-red-dashboard": "3.2.3"
     },
     "node-red": {
         "settings": {
-            "flowFile": "radarmap-flows.json",
-            "credentialsFile": "radarmap-flows_cred.json"
+            "flowFile": "flows.json",
+            "credentialsFile": "flows_cred.json"
         }
     }
 }
