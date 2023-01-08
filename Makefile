@@ -7,7 +7,7 @@ CE_PROJECT_NAME="node-red"
 CE_APP="node-red"
 NODE_RED_USERNAME=adltm
 NODE_RED_PASSWORD=asdf
-API_KEY=
+API_KEY=8C-U5ArLSUfvyWKVLkVOq1grJ-L1YnMRIM-jQUJw7Ajp
 
 default: build run
 
@@ -49,6 +49,7 @@ apikey-delete:
 	ibmcloud iam api-key-delete -f makefile
 
 code-engine-create:
+	ibmcloud ce project create -n $(CE_PROJECT_NAME)
 	ibmcloud ce registry create --name ibm-container-registry --server de.icr.io --username iamapikey --password $(API_KEY)
 	ibmcloud ce secret create --name node-red-config --from-env-file code-engine-secrets
 	ibmcloud ce app create --name node-red --image $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION) --registry-secret ibm-container-registry --env-from-secret node-red-config  --port 1880 --max-scale 1 --cpu 0.25 --memory 0.5G 
@@ -62,6 +63,7 @@ code-engine-update:
 	ibmcloud ce app logs --name $(CE_APP)
 
 code-engine-delete:
+	ibmcloud ce project select -n $(CE_PROJECT_NAME)
 	ibmcloud ce registry delete -n ibm-container-registry -f
 	ibmcloud ce secret delete -n node-red-config -f
 	ibmcloud ce app delete --name $(CE_APP) -f

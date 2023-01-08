@@ -23,8 +23,16 @@ make code-engine-delete
 ## Prerequisites
 
 - [IBM Cloud account](https://cloud.ibm.com/)
+- [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - [IBM Container Registry](https://cloud.ibm.com/registry/catalog) instance
 - [IBM Code Engine](https://cloud.ibm.com/codeengine/overview) instance
+
+Install ibmcloud cli plugins "Code Engine" and "Container Registry"
+
+```
+ibmcloud plugin install code-engine
+ibmcloud plugin install container-registry
+```
 
 ## How to use
 
