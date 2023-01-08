@@ -8,9 +8,7 @@ WORKDIR /settings
 COPY settings.js /settings/
 RUN yum install -y httpd-tools 
 RUN PWHASH=$(htpasswd -nbBC 10 ${NODE_RED_USERNAME} ${NODE_RED_PASSWORD} | cut -d ':' -f 2) &&\
-    uname_old='username: "admin"' &&\
-    uname_new='username: "${NODE_RED_USERNAME}"' &&\
-    sed -i 's/username: \"admin\"/'"username: \"${NODE_RED_USERNAME}\"/" settings.js &&\
+    sed -i 's/myusername/'"${NODE_RED_USERNAME}/" settings.js &&\
     sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js
 
 # Build image

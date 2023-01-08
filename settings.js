@@ -125,7 +125,7 @@ module.exports = {
     type: "credentials",
     users: [
       {
-        username: "admin",
+        username: "myusername",
         password: "mybcrypthash",
         permissions: "*",
       },
