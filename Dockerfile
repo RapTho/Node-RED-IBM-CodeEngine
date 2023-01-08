@@ -1,36 +1,34 @@
-FROM registry.access.redhat.com/ubi9:9.0.0-1640 as build
+# Secure Node-RED editor by generating bcrypt hash and store it in settings.js
+FROM registry.access.redhat.com/ubi9:9.0.0-1640 as hasher
+
+ARG NODE_RED_USERNAME
+ARG NODE_RED_PASSWORD
+
+WORKDIR /settings
+COPY settings.js /settings/
+RUN yum install -y httpd-tools &&\
+    PWHASH=$(htpasswd -nbBC 10 ${NODE_RED_USERNAME} ${NODE_RED_PASSWORD} | cut -d ':' -f 2) &&\
+    sed -i 's/admin/'"${NODE_RED_USERNAME}/" settings.js &&\
+    sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js
+
+# Build image
+# Dockerhub official node:18.12.1
+FROM node@sha256:24fa671fefd72b475dd41365717920770bb2702a4fccfd9ef300a3b7f60d6555 as build
 LABEL stage=builder
 
-RUN dnf install --nodocs -y nodejs nodejs-nodemon npm --setopt=install_weak_deps=0 --disableplugin=subscription-manager \
-    && dnf install --nodocs -y make git gcc gcc-c++  --setopt=install_weak_deps=0 --disableplugin=subscription-manager \
-    && dnf clean all --disableplugin=subscription-manager
-
 WORKDIR /opt/app-root/data
-COPY ./package.json /opt/app-root/data/package.json
-# Prevent "npm ERR! code ERR_SOCKET_TIMEOUT" by upgrading from npm 8.3 to >= npm 8.5.1
-RUN npm install --no-audit --no-update-notifier --no-fund --omit=dev --omit=optional --location=global npm@8.19.2
-RUN npm install --no-audit --no-update-notifier --no-fund --omit=dev
-
-RUN rm -rf /opt/app-root/data/node_modules/image-q/demo
-COPY ./settings.js /opt/app-root/data/
-# COPY ./.env /opt/app-root/data/
-COPY ./flows.json /opt/app-root/data/flows.json
-COPY ./flows_cred.json /opt/app-root/data/flows_cred.json
+COPY ["package.json", "flows.json", "flows_cred.json", "/opt/app-root/data/"]
+COPY --from=hasher /settings/settings.js /opt/app-root/data/
+RUN npm install --no-audit --no-fund --omit=dev
 
 ## Release image
-# FROM registry.access.redhat.com/ubi9/nodejs-16-minimal:1-60
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.0.0-1644
+# Dockerhub official node:18.12.1-slim
+FROM node@sha256:0c3ea57b6c560f83120801e222691d9bd187c605605185810752a19225b5e4d9
 
-USER 0
-RUN microdnf update -y --nodocs && \
-    microdnf install --nodocs -y nodejs nodejs-nodemon npm --setopt=install_weak_deps=0 && \
-    microdnf clean all && \
-    rm -rf /mnt/rootfs/var/cache/* /mnt/rootfs/var/log/dnf* /mnt/rootfs/var/log/yum.*
-
-RUN mkdir -p /opt/app-root/data && chown 1000 /opt/app-root/data
-USER 1000
-COPY --from=build /opt/app-root/data /opt/app-root/data/
 WORKDIR /opt/app-root/data
+COPY --from=build /opt/app-root/data /opt/app-root/data/
+RUN chown -R node:node /opt/app-root/data
+USER node
 
 ENV PORT 1880
 ENV NODE_ENV=production
