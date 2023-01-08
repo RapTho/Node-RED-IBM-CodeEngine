@@ -1,24 +1,18 @@
-# Secure Node-RED editor by generating bcrypt hash and store it in settings.js
-FROM registry.access.redhat.com/ubi9:9.0.0-1640 as hasher
-
-ARG NODE_RED_USERNAME
-ARG NODE_RED_PASSWORD
-
-WORKDIR /settings
-COPY settings.js /settings/
-RUN yum install -y httpd-tools 
-RUN PWHASH=$(htpasswd -nbBC 10 ${NODE_RED_USERNAME} ${NODE_RED_PASSWORD} | cut -d ':' -f 2) &&\
-    sed -i 's/myusername/'"${NODE_RED_USERNAME}/" settings.js &&\
-    sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js
-
 # Build image
 # Dockerhub official node:18.12.1
 FROM node@sha256:24fa671fefd72b475dd41365717920770bb2702a4fccfd9ef300a3b7f60d6555 as build
 LABEL stage=builder
 
+ARG NODE_RED_USERNAME
+ARG NODE_RED_PASSWORD
+
 WORKDIR /opt/app-root/data
-COPY ["package.json", "flows.json", "flows_cred.json", "/opt/app-root/data/"]
-COPY --from=hasher /settings/settings.js /opt/app-root/data/
+
+COPY ["package.json", "settings.js", "flows.json", "flows_cred.json", "/opt/app-root/data/"]
+RUN npm install -g --unsafe-perm node-red-admin
+RUN PWHASH=$(echo -n ${NODE_RED_PASSWORD} | node-red-admin hash-pw | cut -d ' ' -f 2) &&\
+    sed -i 's/myusername/'"${NODE_RED_USERNAME}/" settings.js &&\
+    sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js
 RUN npm install --no-audit --no-fund --omit=dev
 
 ## Release image
