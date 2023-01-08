@@ -7,7 +7,7 @@ CE_PROJECT_NAME="node-red"
 CE_APP="node-red"
 NODE_RED_USERNAME=adltm
 NODE_RED_PASSWORD=asdf
-API_KEY=8C-U5ArLSUfvyWKVLkVOq1grJ-L1YnMRIM-jQUJw7Ajp
+API_KEY=<myKey>
 
 default: build run
 
