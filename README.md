@@ -22,6 +22,7 @@ make code-engine-delete
 
 ## Prerequisites
 
+- [podman](https://podman.io/getting-started/installation)
 - [IBM Cloud account](https://cloud.ibm.com/)
 - [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - [IBM Container Registry](https://cloud.ibm.com/registry/catalog) instance
