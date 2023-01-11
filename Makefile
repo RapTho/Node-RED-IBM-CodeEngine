@@ -43,10 +43,10 @@ push:
 	podman push $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION)
 
 apikey-create:
-	ibmcloud iam api-key-create makefile -d "API Key for Makefile Automation"
+	ibmcloud iam api-key-create makefile-node-red -d "API Key for Makefile Automation Node-RED on IBM Code Engine"
 
 apikey-delete:
-	ibmcloud iam api-key-delete -f makefile
+	ibmcloud iam api-key-delete -f makefile-node-red
 
 code-engine-create:
 	ibmcloud ce project create -n $(CE_PROJECT_NAME)
