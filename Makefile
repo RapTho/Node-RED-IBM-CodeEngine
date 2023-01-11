@@ -52,13 +52,13 @@ code-engine-create:
 	ibmcloud ce project create -n $(CE_PROJECT_NAME)
 	ibmcloud ce registry create --name ibm-container-registry --server de.icr.io --username iamapikey --password $(API_KEY)
 	ibmcloud ce secret create --name node-red-config --from-env-file code-engine-secrets
-	ibmcloud ce app create --name node-red --image $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION) --registry-secret ibm-container-registry --env-from-secret node-red-config  --port 1880 --max-scale 1 --cpu 0.25 --memory 0.5G 
+	ibmcloud ce app create --name node-red --image $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION) --registry-secret ibm-container-registry --env-from-secret node-red-config  --port 1880 --min-scale 1 --max-scale 1 --cpu 0.25 --memory 0.5G 
 
 code-engine-update:
 	ibmcloud ce project select -n $(CE_PROJECT_NAME)
 	ibmcloud ce app get -n $(CE_APP)
 	ibmcloud ce secret update --name node-red-config --from-env-file code-engine-secrets
-	ibmcloud ce app update --name $(CE_APP) --image $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION) --registry-secret ibm-container-registry --port 1880 --max-scale 1 --cpu 0.25 --memory 0.5G --env-from-secret node-red-config
+	ibmcloud ce app update --name $(CE_APP) --image $(ICR_ID)/$(IMG_NAME):$(IMG_VERSION) --registry-secret ibm-container-registry --port 1880 --min-scale 1 --max-scale 1 --cpu 0.25 --memory 0.5G --env-from-secret node-red-config
 	ibmcloud ce app logs --name $(CE_APP)
 
 code-engine-delete:
