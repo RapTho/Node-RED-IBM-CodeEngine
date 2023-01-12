@@ -11,8 +11,10 @@ WORKDIR /opt/app-root/data
 COPY ["package.json", "settings.js", "flows.json", "flows_cred.json", "/opt/app-root/data/"]
 RUN npm install -g --unsafe-perm node-red-admin
 RUN PWHASH=$(echo -n ${NODE_RED_PASSWORD} | node-red-admin hash-pw | cut -d ' ' -f 2) &&\
+    echo "created Hash: ${PWHASH}" &&\
+    sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js &&\
     sed -i 's/myusername/'"${NODE_RED_USERNAME}/" settings.js &&\
-    sed -i 's/mybcrypthash/'"${PWHASH}/" settings.js
+    sed -i 's/a-secret-key/'"${NODE_RED_PASSWORD}/" settings.js
 RUN npm install --no-audit --no-fund --omit=dev
 
 ## Release image
